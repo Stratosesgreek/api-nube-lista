@@ -4,11 +4,11 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 import os
 
-DATABASE_HOST = os.getenv('DATABASE_HOST', 'db')
-DATABASE_USER = os.getenv('DATABASE_USER', 'postgres')
-DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD', '1234')
-DATABASE_NAME = os.getenv('DATABASE_NAME', 'api')
-DATABASE_PORT = os.getenv('DATABASE_PORT', '5432')
+DATABASE_HOST = os.getenv('DATABASE_HOST')
+DATABASE_USER = os.getenv('DATABASE_USER')
+DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
+DATABASE_NAME = os.getenv('DATABASE_NAME')
+DATABASE_PORT = os.getenv('DATABASE_PORT')
 
 url_database = f'postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}'
 
