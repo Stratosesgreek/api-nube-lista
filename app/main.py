@@ -1,7 +1,7 @@
 from typing import Union, List, Optional
 from fastapi import FastAPI, HTTPException, Depends, status
 from pydantic import BaseModel, EmailStr
-import models, database
+from app import models, database
 
 app = FastAPI()
 

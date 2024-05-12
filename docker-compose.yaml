@@ -11,7 +11,7 @@ services:
   web:
     image: api/fastapi:v1
     build: .
-    command: uvicorn main:app --host 0.0.0.0 --port 80
+    command: uvicorn app.main:app --host 0.0.0.0 --port 80
     ports:
       - "8080:80"
     volumes:
