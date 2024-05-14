@@ -1,5 +1,5 @@
 from typing import Union, List, Optional
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Request
 from pydantic import BaseModel, EmailStr
 from app import models, database
 
@@ -37,13 +37,13 @@ def get_users(page: int = 1, per_page: int = 10, db: database.Session = Depends(
         users_response.append(User(id=user_db.id, name=user_db.name, emails=email_list))
 
     # Construye el enlace a la siguiente página si esta existe
-    next_page_url =  f"http://127.0.0.1:8000/directories/?page={page + 1}" + (f"&per_page={per_page}" if per_page != 10 else "") if page < total_pages else None
+    next_page_url = str(request.url).split("/directories/")[0] + f"/directories/?page={page + 1}" + (f"&per_page={per_page}" if per_page != 10 else "") if page < total_pages else None
 
     # Construye la respuesta
     response = {
         "count": total_users,
         "next": next_page_url,
-        "previous": None if page == 1 else f"http://127.0.0.1:8000/directories/?page={page - 1}" + (f"&per_page={per_page}" if per_page != 10 else ""),
+        "previous": None if page == 1 else str(request.url).split("/directories/")[0] + f"/directories/?page={page - 1}" + (f"&per_page={per_page}" if per_page != 10 else ""),
         "results": users_response
     }
 
