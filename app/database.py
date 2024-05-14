@@ -6,7 +6,11 @@ import os
 
 DATABASE_HOST = os.getenv('DATABASE_HOST')
 DATABASE_USER = os.getenv('DATABASE_USER')
-DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
+# DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
+
+with open('/run/secrets/db_user_passwd', 'r') as file:
+    DATABASE_PASSWORD = file.read().strip()
+    
 DATABASE_NAME = os.getenv('DATABASE_NAME')
 DATABASE_PORT = os.getenv('DATABASE_PORT')
 

@@ -1,0 +1,54 @@
+volumes:
+  db:
+    driver: local
+    driver_opts:
+      type: "nfs"
+      o: "addr=nfssrv01,rw"
+      device: ":/home/docker-vols/test/db"
+
+networks:
+  wpnet:
+    driver: overlay
+
+secrets:
+  db_user_passwd:
+    file: ./db_user_passwd
+
+services:
+
+  web:
+    image: fransbompart/api_fastapi:v2
+    restart: always
+    deploy:
+      replicas: 2
+    networks:
+      - wpnet
+    command: ["sh", "-c", "/wait-for-db.sh db && uvicorn app.main:app --host 0.0.0.0 --port 80"]
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_PORT: 5432
+    secrets:
+        - db_user_passwd
+
+  db:
+    image: 'postgres:15.0-alpine'
+    networks:
+      - wpnet
+    restart: always
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_user_passwd
+    volumes:
+      - db:/var/lib/postgresql/data
+    secrets:
+        - db_user_passwd
+   
+
+    
