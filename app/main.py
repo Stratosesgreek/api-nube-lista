@@ -40,7 +40,7 @@ def get_users(request: Request, page: int = 1, per_page: int = 10, db: database.
     # Construye la respuesta
     response = {
         "count": total_users,
-        "next": full_url.split("/items/")[0] + (f"&per_page={per_page}" if per_page != 10 else "") if page < total_pages else None,
+        "next": full_url.split("/directories/")[0] + f"/directories/?page={page + 1}" + (f"&per_page={per_page}" if per_page != 10 else "") if page < total_pages else None,
         "previous": None if page == 1 or page>total_pages else str(request.url).split("/directories/")[0] + f"/directories/?page={page - 1}" + (f"&per_page={per_page}" if per_page != 10 else ""),
         "results": users_response
     }
