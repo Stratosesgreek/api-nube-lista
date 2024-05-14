@@ -20,7 +20,7 @@ def get_status():
     return {"message": "pong"}
 
 @app.get("/directories/")
-def get_users(page: int = 1, per_page: int = 10, db: database.Session = Depends(database.get_db)):
+def get_users(request: Request, page: int = 1, per_page: int = 10, db: database.Session = Depends(database.get_db)):
     # Calcula el total de objetos para determinar si hay una siguiente página
     total_users = db.query(models.Users).count()
     total_pages = (total_users - 1) // per_page + 1
@@ -35,15 +35,13 @@ def get_users(page: int = 1, per_page: int = 10, db: database.Session = Depends(
         db_emails = db.query(models.Emails).filter(models.Emails.user_id == user_db.id).all()
         email_list = [email_model.email for email_model in db_emails]
         users_response.append(User(id=user_db.id, name=user_db.name, emails=email_list))
-
-    # Construye el enlace a la siguiente página si esta existe
-    next_page_url = str(request.url).split("/directories/")[0] + f"/directories/?page={page + 1}" + (f"&per_page={per_page}" if per_page != 10 else "") if page < total_pages else None
+    full_url = str(request.url)
 
     # Construye la respuesta
     response = {
         "count": total_users,
-        "next": next_page_url,
-        "previous": None if page == 1 else str(request.url).split("/directories/")[0] + f"/directories/?page={page - 1}" + (f"&per_page={per_page}" if per_page != 10 else ""),
+        "next": full_url.split("/items/")[0] + (f"&per_page={per_page}" if per_page != 10 else "") if page < total_pages else None,
+        "previous": None if page == 1 or page>total_pages else str(request.url).split("/directories/")[0] + f"/directories/?page={page - 1}" + (f"&per_page={per_page}" if per_page != 10 else ""),
         "results": users_response
     }
 
